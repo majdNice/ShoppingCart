@@ -1,16 +1,19 @@
-package com.example.ShoppingCart;
+package com.example.ShoppingCart.service;
+
+import java.util.logging.Logger;
 
 public class CartItem {
+    private static final Logger logger = Logger.getLogger(CartItem.class.getName());
     private final Item stockItem;
     private int quantity;
 
     public CartItem(Item stockItem, int quantity) {
         if (quantity <= 0) {
-            Logger.getInstance().error("Attempted to create CartItem with non-positive quantity: " + quantity);
+            logger.severe("Attempted to create CartItem with non-positive quantity: " + quantity);
             throw new IllegalArgumentException("Quantity must be positive");
         }
         if (quantity > stockItem.getQuantity()) {
-            Logger.getInstance().error("Not enough stock for item: " + stockItem.getName() + " (Required: " + quantity
+            logger.severe("Not enough stock for item: " + stockItem.getName() + " (Required: " + quantity
                     + ", Available: " + stockItem.getQuantity() + ")");
             throw new IllegalArgumentException("Not enough quantity in stock");
         }

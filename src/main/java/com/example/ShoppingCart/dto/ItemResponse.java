@@ -1,6 +1,6 @@
 package com.example.ShoppingCart.dto;
 
-import com.example.ShoppingCart.Item;
+import com.example.ShoppingCart.service.Item;
 
 public record ItemResponse(int id, String name, int quantity, int price) {
     public static ItemResponse from(Item item) {

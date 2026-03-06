@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--              CONSOLE (colorful)             -->
+    <!-- ═══════════════════════════════════════════ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss} %highlight(%-5level) %cyan([%thread]) %boldMagenta(%logger{36}) %white(—) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--          FILE (clean + structured)          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %-5level | [%thread] | %logger{36} | %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--               LOG LEVELS                    -->
+    <!-- ═══════════════════════════════════════════ -->
+    <logger name="com.example" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

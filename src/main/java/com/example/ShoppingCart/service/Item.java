@@ -1,10 +1,13 @@
-package com.example.ShoppingCart;
+package com.example.ShoppingCart.service;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.logging.Logger;
+
 public class Item {
+    private static final Logger logger = Logger.getLogger(Item.class.getName());
     private static int currID = 0;
     private static final Map<String, Item> stockRegistry = new HashMap<>();
 
@@ -15,19 +18,19 @@ public class Item {
 
     public Item(String name, int quantity, int price) {
         if (name == null || name.trim().isEmpty()) {
-            Logger.getInstance().error("Attempted to create item with empty name.");
+            logger.severe("Attempted to create item with empty name.");
             throw new IllegalArgumentException("Name cannot be empty");
         }
         if (stockRegistry.containsKey(name)) {
-            Logger.getInstance().error("Attempted to create duplicate item: " + name);
+            logger.severe("Attempted to create duplicate item: " + name);
             throw new IllegalArgumentException("Item with name '" + name + "' already exists");
         }
         if (quantity < 0) {
-            Logger.getInstance().error("Attempted to create item with negative quantity: " + quantity);
+            logger.severe("Attempted to create item with negative quantity: " + quantity);
             throw new IllegalArgumentException("Quantity cannot be negative");
         }
         if (price <= 0) {
-            Logger.getInstance().error("Attempted to create item with non-positive price: " + price);
+            logger.severe("Attempted to create item with non-positive price: " + price);
             throw new IllegalArgumentException("Price must be positive");
         }
 
@@ -36,8 +39,7 @@ public class Item {
         this.quantity = quantity;
         this.price = price;
 
-        Logger.getInstance()
-                .info("Item created: " + name + " (ID: " + id + ", Qty: " + quantity + ", Price: " + price + ")");
+        logger.info("Item created: " + name + " (ID: " + id + ", Qty: " + quantity + ", Price: " + price + ")");
         stockRegistry.put(name, this);
     }
 

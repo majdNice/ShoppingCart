@@ -1,11 +1,14 @@
-package com.example.ShoppingCart;
+package com.example.ShoppingCart.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.util.logging.Logger;
+
 public class Cart {
+    private static final Logger logger = Logger.getLogger(Cart.class.getName());
     private final Map<String, CartItem> items = new ConcurrentHashMap<>();
     private double discountPercentage = 0;
 
@@ -22,16 +25,16 @@ public class Cart {
      */
     public void addItem(Item item, int quantity) {
         if (item == null) {
-            Logger.getInstance().error("Attempted to add a null item to the cart.");
+            logger.severe("Attempted to add a null item to the cart.");
             throw new IllegalArgumentException("Item cannot be null");
         }
         String key = item.getName();
         if (items.containsKey(key)) {
             CartItem existing = items.get(key);
-            Logger.getInstance().info("Updating quantity for existing item: " + key + " - adding " + quantity);
+            logger.info("Updating quantity for existing item: " + key + " - adding " + quantity);
             existing.updateQuantity(existing.getQuantity() + quantity);
         } else {
-            Logger.getInstance().info("Adding new item to cart: " + key + " with quantity " + quantity);
+            logger.info("Adding new item to cart: " + key + " with quantity " + quantity);
             items.put(key, new CartItem(item, quantity));
         }
     }
@@ -39,11 +42,11 @@ public class Cart {
     public void removeItem(String itemName) {
         CartItem cartItem = items.get(itemName);
         if (cartItem != null) {
-            Logger.getInstance().warn("Removing item from cart: " + itemName);
+            logger.warning("Removing item from cart: " + itemName);
             cartItem.getStockItem().increaseQuantity(cartItem.getQuantity());
             items.remove(itemName);
         } else {
-            Logger.getInstance().warn("Attempted to remove non-existent item: " + itemName);
+            logger.warning("Attempted to remove non-existent item: " + itemName);
         }
     }
 
@@ -98,7 +101,7 @@ public class Cart {
      * Clear the entire cart.
      */
     public void clear() {
-        Logger.getInstance().info("Clearing the cart...");
+        logger.info("Clearing the cart...");
         for (CartItem item : items.values()) {
             item.getStockItem().increaseQuantity(item.getQuantity());
         }

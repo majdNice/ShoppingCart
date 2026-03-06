@@ -12,6 +12,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.example.ShoppingCart.service.Cart;
+import com.example.ShoppingCart.service.CartItem;
+import com.example.ShoppingCart.service.Item;
+
 @DisplayName("Cart Logic Tests")
 class CartTest {
 
@@ -56,7 +60,8 @@ class CartTest {
     @DisplayName("add Item")
     class AddItemTests {
         @Test
-        // assert when adding an item to the cart the item stock is updated and the quantity of that item in the cart is updated
+        // assert when adding an item to the cart the item stock is updated and the
+        // quantity of that item in the cart is updated
         void addsNewItemToCart() {
             cart.addItem(apple, 2);
             List<CartItem> items = cart.getItems();

@@ -1,20 +1,23 @@
 package com.example.ShoppingCart.controller;
 
-import com.example.ShoppingCart.Cart;
-import com.example.ShoppingCart.Item;
-import com.example.ShoppingCart.Logger;
 import com.example.ShoppingCart.dto.AddToCartRequest;
 import com.example.ShoppingCart.dto.CartResponse;
 import com.example.ShoppingCart.dto.CreateCartRequest;
 import com.example.ShoppingCart.dto.UpdateCartItemRequest;
+import com.example.ShoppingCart.service.Cart;
 import com.example.ShoppingCart.service.CartStore;
+import com.example.ShoppingCart.service.Item;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.logging.Logger;
+
 @RestController
 @RequestMapping("/api/carts")
 public class CartController {
+    private static final Logger logger = Logger.getLogger(CartController.class.getName());
 
     private final CartStore cartStore;
 
@@ -25,13 +28,12 @@ public class CartController {
     @PostMapping
     public ResponseEntity<?> createCart(@RequestBody CreateCartRequest request) {
         try {
-            Logger.getInstance()
-                    .info("Received request to create cart with discount: " + request.discountPercentage() + "%");
+            logger.info("Received request to create cart with discount: " + request.discountPercentage() + "%");
             String cartId = cartStore.createCart(request.discountPercentage());
             Cart cart = cartStore.getCart(cartId);
             return ResponseEntity.status(HttpStatus.CREATED).body(CartResponse.from(cartId, cart));
         } catch (IllegalArgumentException e) {
-            Logger.getInstance().error("Failed to create cart: " + e.getMessage());
+            logger.severe("Failed to create cart: " + e.getMessage());
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
@@ -39,10 +41,10 @@ public class CartController {
     @GetMapping("/{cartId}")
     public ResponseEntity<?> getCart(@PathVariable String cartId) {
         if (!cartStore.cartExists(cartId)) {
-            Logger.getInstance().warn("Attempted to retrieve non-existent cart: " + cartId);
+            logger.warning("Attempted to retrieve non-existent cart: " + cartId);
             return ResponseEntity.notFound().build();
         }
-        Logger.getInstance().info("Retrieving cart: " + cartId);
+        logger.info("Retrieving cart: " + cartId);
         Cart cart = cartStore.getCart(cartId);
         return ResponseEntity.ok(CartResponse.from(cartId, cart));
     }
@@ -50,23 +52,23 @@ public class CartController {
     @PostMapping("/{cartId}/items")
     public ResponseEntity<?> addItemToCart(@PathVariable String cartId, @RequestBody AddToCartRequest request) {
         if (!cartStore.cartExists(cartId)) {
-            Logger.getInstance().warn("Attempted to add items to non-existent cart: " + cartId);
+            logger.warning("Attempted to add items to non-existent cart: " + cartId);
             return ResponseEntity.notFound().build();
         }
         Item item = Item.getItemByName(request.itemName());
         if (item == null) {
-            Logger.getInstance().error("Item not found: " + request.itemName());
+            logger.severe("Item not found: " + request.itemName());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorMessage("Item not found: " + request.itemName()));
         }
         try {
-            Logger.getInstance().info("Adding item to cart - Cart ID: " + cartId + ", Item: " + request.itemName()
+            logger.info("Adding item to cart - Cart ID: " + cartId + ", Item: " + request.itemName()
                     + ", Qty: " + request.quantity());
             Cart cart = cartStore.getCart(cartId);
             cart.addItem(item, request.quantity());
             return ResponseEntity.status(HttpStatus.CREATED).body(CartResponse.from(cartId, cart));
         } catch (IllegalArgumentException e) {
-            Logger.getInstance().error("Failed to add item to cart: " + e.getMessage());
+            logger.severe("Failed to add item to cart: " + e.getMessage());
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
@@ -75,17 +77,17 @@ public class CartController {
     public ResponseEntity<?> updateCartItem(@PathVariable String cartId, @PathVariable String itemName,
             @RequestBody UpdateCartItemRequest request) {
         if (!cartStore.cartExists(cartId)) {
-            Logger.getInstance().warn("Attempted to update item in non-existent cart: " + cartId);
+            logger.warning("Attempted to update item in non-existent cart: " + cartId);
             return ResponseEntity.notFound().build();
         }
         try {
-            Logger.getInstance().info("Updating cart item - Cart ID: " + cartId + ", Item: " + itemName + ", New Qty: "
+            logger.info("Updating cart item - Cart ID: " + cartId + ", Item: " + itemName + ", New Qty: "
                     + request.quantity());
             Cart cart = cartStore.getCart(cartId);
             cart.updateItemQuantity(itemName, request.quantity());
             return ResponseEntity.ok(CartResponse.from(cartId, cart));
         } catch (IllegalArgumentException e) {
-            Logger.getInstance().error("Failed to update cart item: " + e.getMessage());
+            logger.severe("Failed to update cart item: " + e.getMessage());
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
@@ -93,16 +95,16 @@ public class CartController {
     @DeleteMapping("/{cartId}/items/{itemName}")
     public ResponseEntity<?> removeItemFromCart(@PathVariable String cartId, @PathVariable String itemName) {
         if (!cartStore.cartExists(cartId)) {
-            Logger.getInstance().warn("Attempted to remove item from non-existent cart: " + cartId);
+            logger.warning("Attempted to remove item from non-existent cart: " + cartId);
             return ResponseEntity.notFound().build();
         }
         try {
-            Logger.getInstance().info("Removing item from cart - Cart ID: " + cartId + ", Item: " + itemName);
+            logger.info("Removing item from cart - Cart ID: " + cartId + ", Item: " + itemName);
             Cart cart = cartStore.getCart(cartId);
             cart.removeItem(itemName);
             return ResponseEntity.ok(CartResponse.from(cartId, cart));
         } catch (NullPointerException e) {
-            Logger.getInstance().error("Failed to remove item (Not in cart): " + itemName);
+            logger.severe("Failed to remove item (Not in cart): " + itemName);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessage("Item not in cart: " + itemName));
         }
     }
@@ -110,10 +112,10 @@ public class CartController {
     @DeleteMapping("/{cartId}")
     public ResponseEntity<?> clearCart(@PathVariable String cartId) {
         if (!cartStore.cartExists(cartId)) {
-            Logger.getInstance().warn("Attempted to clear non-existent cart: " + cartId);
+            logger.warning("Attempted to clear non-existent cart: " + cartId);
             return ResponseEntity.notFound().build();
         }
-        Logger.getInstance().info("Clearing cart - Cart ID: " + cartId);
+        logger.info("Clearing cart - Cart ID: " + cartId);
         Cart cart = cartStore.getCart(cartId);
         cart.clear();
         return ResponseEntity.ok(CartResponse.from(cartId, cart));

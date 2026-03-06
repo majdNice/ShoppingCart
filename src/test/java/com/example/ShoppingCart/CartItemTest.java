@@ -7,6 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.example.ShoppingCart.service.CartItem;
+import com.example.ShoppingCart.service.Item;
+
 @DisplayName("CartItem Logic Tests")
 class CartItemTest {
 
@@ -21,7 +24,7 @@ class CartItemTest {
     @DisplayName("Constructor")
     class ConstructorTests {
         @Test
-        // creates cart item with valid quantity and decreases stock 
+        // creates cart item with valid quantity and decreases stock
         void createsCartItemWithValidQuantity() {
             CartItem cartItem = new CartItem(item, 5);
             assertEquals(5, cartItem.getQuantity());
@@ -53,7 +56,7 @@ class CartItemTest {
         }
 
         @Test
-        // checking if throws when quantity is negative 
+        // checking if throws when quantity is negative
         void throwsWhenQuantityNegative() {
             IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                     () -> new CartItem(item, -1));
