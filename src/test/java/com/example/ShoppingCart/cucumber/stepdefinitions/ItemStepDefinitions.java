@@ -1,4 +1,4 @@
-package com.example.ShoppingCart;
+package com.example.ShoppingCart.cucumber.stepdefinitions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,4 +63,3 @@ public class ItemStepDefinitions {
                 .andExpect(jsonPath("$.price").value(itemPrice));
     }
 }
-

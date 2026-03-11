@@ -1,7 +1,9 @@
-package com.example.ShoppingCart;
-import org.springframework.boot.test.context.SpringBootTest;
+package com.example.ShoppingCart.cucumber;
 
+import org.springframework.boot.test.context.SpringBootTest;
+import com.example.ShoppingCart.ShoppingCartApplication;
 import io.cucumber.spring.CucumberContextConfiguration;
+
 @CucumberContextConfiguration
 @SpringBootTest(classes = ShoppingCartApplication.class)
 public class CucumberSpringConfiguration {
